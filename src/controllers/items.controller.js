@@ -5,87 +5,127 @@ import { marketplaceAbi } from "../abi/marketplace-abi.js";
 const rpcURL = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 const web3 = new Web3(rpcURL);
 
+let json = {
+  name: "NFTshootout Legend Series",
+  description:
+    "This NFT player card is Part of the NFTshootout Legend collection V1 Series, this player is part of our Unreal engine developed football game and can be used in conjunction with our play-to-earn game to earn daily SHOO token rewards. Find out more at https://nftshootout.com/",
+  image: "def_0001.png",
+  tokenId: "0000000000",
+  attributes: [
+    {
+      trait_type: "Position",
+      value: "DEF",
+    },
+    {
+      trait_type: "DefRating",
+      value: "70",
+    },
+    {
+      trait_type: "AttRating",
+      value: "20",
+    },
+    {
+      trait_type: "Nationality",
+      value: "Mexico",
+    },
+    {
+      trait_type: "Hairstyle",
+      value: "hair 4",
+    },
+    {
+      trait_type: "Eyes",
+      value: "eye 1",
+    },
+    {
+      trait_type: "Body",
+      value: "female 1",
+    },
+    {
+      trait_type: "Tshirt",
+      value: "blue",
+    },
+  ],
+};
+
 const getUnlistedItems = async (req, res) => {
+  const { collectionAddress, userAddress } = req.params;
 
-    const { collectionAddress, userAddress } = req.params;
+  const nftContract = new web3.eth.Contract(nftAbi, collectionAddress);
 
-    const nftContract = new web3.eth.Contract(
-        nftAbi,
-        collectionAddress
-      );
-    
-    let totalItems = parseInt(await nftContract.methods.balanceOf(userAddress).call())
-    let items = []
+  let totalItems = parseInt(
+    await nftContract.methods.balanceOf(userAddress).call()
+  );
+  let items = [];
 
-    for (let i = 0; i < totalItems; i++) {
-        let token = await nftContract.methods.tokenOfOwnerByIndex(userAddress, i).call()
-        if (token) {
-            items.push({
-                owner: userAddress,
-                forSale: false,
-                tokenAddress: collectionAddress,
-                tokenId: parseInt(token),
-                metadata: [],
-                price: null,
-                imageUrl: null
-            }) 
-        }
+  for (let i = 0; i < totalItems; i++) {
+    let token = await nftContract.methods
+      .tokenOfOwnerByIndex(userAddress, i)
+      .call();
+    if (token) {
+      items.push({
+        name: json.name,
+        description: json.description,
+        owner: userAddress,
+        forSale: false,
+        tokenAddress: collectionAddress,
+        tokenId: parseInt(token),
+        metadata: json.attributes,
+        price: null,
+        imageUrl:'https://i.ibb.co/tD41FSX/Whats-App-Image-2022-03-09-at-5-15-39-PM.jpg'
+      });
     }
-    
-    res.send({
-        total: totalItems,
-        items
-    })
+  }
 
-}
+  res.send({
+    total: totalItems,
+    items,
+  });
+};
 
 const getSingleItem = async (req, res) => {
+  const { collectionAddress, tokenId } = req.params;
 
-const { collectionAddress, tokenId } = req.params;
+  const nftContract = new web3.eth.Contract(nftAbi, collectionAddress);
 
-const nftContract = new web3.eth.Contract(
-    nftAbi,
-    collectionAddress
-  );
-
-const marketplaceContact = new web3.eth.Contract(
+  const marketplaceContact = new web3.eth.Contract(
     marketplaceAbi,
     "0x65ead95f7161Efe9b11a444CCF31fDa358d01AB7"
   );
- 
-let currentOwner = await nftContract.methods.ownerOf(tokenId).call()
 
-let token = {
-    tokenId: tokenId,
-    tokenAddress: collectionAddress,
-    price: null,
-    owner: null,
-    forSale: false,
-    metadata: [],
-    imageUrl: null
-}
+  try {
+    let currentOwner = await nftContract.methods.ownerOf(tokenId).call();
 
-if (currentOwner === '0x65ead95f7161Efe9b11a444CCF31fDa358d01AB7') {
-    token.forSale = true;
-} else {
-    token.owner = currentOwner;
-}
+    let token = {
+      name: json.name,
+      description: json.description,
+      tokenId: tokenId,
+      tokenAddress: collectionAddress,
+      price: null,
+      owner: null,
+      forSale: false,
+      metadata: json.attributes,
+      imageUrl:'https://i.ibb.co/tD41FSX/Whats-App-Image-2022-03-09-at-5-15-39-PM.jpg'
+    };
 
-if (token.forSale) {
+    if (currentOwner === "0x65ead95f7161Efe9b11a444CCF31fDa358d01AB7") {
+      token.forSale = true;
+    } else {
+      token.owner = currentOwner;
+    }
 
-    const listing = await marketplaceContact.methods
-    .viewAsksByCollectionAndTokenIds(collectionAddress, [parseInt(tokenId)])
-    .call();
+    if (token.forSale) {
+      const listing = await marketplaceContact.methods
+        .viewAsksByCollectionAndTokenIds(collectionAddress, [parseInt(tokenId)])
+        .call();
 
-    token.owner = listing.askInfo[0][0]
-    token.price = web3.utils.fromWei(listing.askInfo[0][1], 'ether');
+      token.owner = listing.askInfo[0][0];
+      token.price = web3.utils.fromWei(listing.askInfo[0][1], "ether");
+    }
 
-}
-
-res.send(token)
-    
-}
-
-
+    res.send(token);
+  } catch (err) {
+    res.send({});
+  }
+};
 
 export { getUnlistedItems, getSingleItem };

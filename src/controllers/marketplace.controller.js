@@ -9,7 +9,47 @@ const marketplaceContact = new web3.eth.Contract(
 );
 
 const nftUri = 'https://ipfs.io/ipfs/QmQWH1KvPDrYo5dpMbdG3AWc4vU4idA88eTLshEzq9wQup/metadata/'
-  
+let json = {
+  "name": "NFTshootout Legend Series",
+  "description": "This NFT player card is Part of the NFTshootout Legend collection V1 Series, this player is part of our Unreal engine developed football game and can be used in conjunction with our play-to-earn game to earn daily SHOO token rewards. Find out more at https://nftshootout.com/",
+  "image": "def_0001.png",
+  "tokenId": "0000000000",
+  "attributes": [
+        {
+              "trait_type": "Position",
+              "value": "DEF"
+        },
+        {
+              "trait_type": "DefRating",
+              "value": "70"
+        },
+        {
+              "trait_type": "AttRating",
+              "value": "20"
+        },
+        {
+              "trait_type": "Nationality",
+              "value": "Mexico"
+        },
+        {
+              "trait_type": "Hairstyle",
+              "value": "hair 4"
+        },
+        {
+              "trait_type": "Eyes",
+              "value": "eye 1"
+        },
+        {
+              "trait_type": "Body",
+              "value": "female 1"
+        },
+        {
+              "trait_type": "Tshirt",
+              "value": "blue"
+        }
+  ]
+}
+
 const getListedNFTs = async (req, res) => { 
 
   let { collectionAddress } = req.params;
@@ -31,13 +71,15 @@ const getListedNFTs = async (req, res) => {
       .call();
 
     let items = partialListed.tokenIds.map((item, index) => ({
+      name: json.name,
+      description: json.description,
       tokenId: item,
       price: web3.utils.fromWei(partialListed.askInfo[index][1], 'ether'),
       owner: partialListed.askInfo[index][0],
       forSale: true,
       tokenAddress: collectionAddress,
-      metadata: [],
-      imageUrl: null
+      metadata: json.attributes,
+      imageUrl: 'https://i.ibb.co/tD41FSX/Whats-App-Image-2022-03-09-at-5-15-39-PM.jpg'
     }));
 
     contractOffset = contractOffset + partialListed.tokenIds.length;
@@ -73,13 +115,15 @@ const getListedCollectionItemsByAddress = async (req, res) => {
       .call();
 
     let items = partialListed.tokenIds.map((item, index) => ({
+      name: json.name,
+      description: json.description,
       tokenId: item,
       price: web3.utils.fromWei(partialListed.askInfo[index][1], 'ether'),
       owner: partialListed.askInfo[index][0],
       tokenAddress: collectionAddress,
       forSale: true,
-      metadata: [],
-      imageUrl: null
+      metadata: json.attributes,
+      imageUrl: 'https://i.ibb.co/tD41FSX/Whats-App-Image-2022-03-09-at-5-15-39-PM.jpg'
     }));
 
     contractOffset = contractOffset + partialListed.tokenIds.length;

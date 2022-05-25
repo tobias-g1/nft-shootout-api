@@ -13,6 +13,10 @@ const getCurrentPrice = async (req, res) => {
           res.send({
               usd: Number(response.data.market_data.current_price.usd).toFixed(15)
           })
+        }).catch(err => {
+          res.send({
+            usd: null
+        })
         })
     
     } catch (err) {
