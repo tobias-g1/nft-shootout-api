@@ -5,12 +5,13 @@ const router = express.Router();
 
 // Controller
 
-import { getListedNFTs,  getListedCollectionItemsByAddress} from "../controllers/marketplace.controller.js";
+import { getListedNFTs,  getListedCollectionItemsByAddress, getFilterOptions} from "../controllers/marketplace.controller.js";
 
 // Routes
 
 router.get('/listed/:collectionAddress', getListedNFTs);
 router.get('/listed/:collectionAddress/:userAddress', getListedCollectionItemsByAddress);
+router.get('/attributes/:collectionAddress', getFilterOptions);
 
 // Export
 

@@ -42,3 +42,4 @@ const listener = app.listen(process.env.PORT || 8082, () => {
     console.log('Listening on port ' + listener.address().port);
 });
 
+import './utils/db.js'

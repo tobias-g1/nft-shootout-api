@@ -20,6 +20,7 @@
     "ipfs": "^0.62.2",
     "ipfs-fetch": "^0.2.1",
     "js-ipfs-fetch": "^3.5.1",
+    "mongoose": "^6.3.4",
     "moralis": "^1.3.5",
     "morgan": "^1.10.0",
     "node-fetch": "^3.2.3",

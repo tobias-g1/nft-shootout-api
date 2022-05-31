@@ -9,16 +9,16 @@ const CollectionSchema = new Schema(
   {
     uri: {
       type: String,
-      required: true
+      required: true,
     },
     name: {
-        type: String,
-        required: true
-      },
-      address: {
-        type: String,
-        required: true
-      },
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
